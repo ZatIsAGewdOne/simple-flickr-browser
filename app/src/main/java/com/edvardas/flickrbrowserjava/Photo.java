@@ -1,8 +1,10 @@
 package com.edvardas.flickrbrowserjava;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Photo {
+public class Photo implements Serializable {
+    private static final long serialVersionUID = 6896496277148508044L;
     private String title;
     private String author;
     private String authorId;

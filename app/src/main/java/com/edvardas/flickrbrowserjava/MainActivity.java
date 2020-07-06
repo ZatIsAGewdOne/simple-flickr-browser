@@ -1,5 +1,6 @@
 package com.edvardas.flickrbrowserjava;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -7,15 +8,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnDataAvailable, OnRecyclerClickListener {
+public class MainActivity extends BaseActivity implements OnDataAvailable, OnRecyclerClickListener {
     private static final String TAG = "MainActivity";
     private FlickrRecyclerViewAdapter flickrRecyclerViewAdapter;
 
@@ -23,8 +22,7 @@ public class MainActivity extends AppCompatActivity implements OnDataAvailable, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        activateToolbar(false);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -33,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements OnDataAvailable, 
 
         flickrRecyclerViewAdapter = new FlickrRecyclerViewAdapter(this, new ArrayList<Photo>());
         recyclerView.setAdapter(flickrRecyclerViewAdapter);
+
+        Log.d(TAG, "onCreate: ends");
     }
 
     @Override
@@ -61,6 +61,12 @@ public class MainActivity extends AppCompatActivity implements OnDataAvailable, 
             return true;
         }
 
+        if (id == R.id.action_search) {
+            Intent intent = new Intent(this, SearchActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -84,6 +90,9 @@ public class MainActivity extends AppCompatActivity implements OnDataAvailable, 
     @Override
     public void onItemLongClick(View view, int position) {
         Log.d(TAG, "onItemLongClick: starts");
-        Toast.makeText(MainActivity.this, "Long tap at position " + position, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(MainActivity.this, "Long tap at position " + position, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, PhotoDetailActivity.class);
+        intent.putExtra(PHOTO_TRANSFER, flickrRecyclerViewAdapter.getPhotoIntoPosition(position));
+        startActivity(intent);
     }
 }
