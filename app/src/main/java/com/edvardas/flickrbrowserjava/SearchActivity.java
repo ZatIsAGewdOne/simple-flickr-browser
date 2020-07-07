@@ -3,7 +3,9 @@ package com.edvardas.flickrbrowserjava;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.SearchView;
@@ -30,14 +32,13 @@ public class SearchActivity extends BaseActivity {
         searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
         SearchableInfo searchableInfo = manager.getSearchableInfo(getComponentName());
         searchView.setSearchableInfo(searchableInfo);
-//        Log.d(TAG, "onCreateOptionsMenu: " + getComponentName().toString());
-//        Log.d(TAG, "onCreateOptionsMenu: hint is " + searchView.getQueryHint());
-//        Log.d(TAG, "onCreateOptionsMenu: searchable info is " + searchableInfo.toString());
         searchView.setIconified(false);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 Log.d(TAG, "onQueryTextSubmit: starts");
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                preferences.edit().putString(FLICKR_QUERY, s).apply();
                 searchView.clearFocus();
                 finish();
                 return false;

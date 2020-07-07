@@ -1,7 +1,9 @@
 package com.edvardas.flickrbrowserjava;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,8 +40,12 @@ public class MainActivity extends BaseActivity implements OnDataAvailable, OnRec
     @Override
     protected void onResume() {
         super.onResume();
-        FlickrJsonDataGetter getter = new FlickrJsonDataGetter(this, "https://api.flickr.com/services/feeds/photos_public.gne", "en-us", true);
-        getter.execute("tux,linux");
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String query = preferences.getString(FLICKR_QUERY, "");
+        if (query != null && !query.isEmpty()) {
+            FlickrJsonDataGetter getter = new FlickrJsonDataGetter(this, "https://api.flickr.com/services/feeds/photos_public.gne", "en-us", true);
+            getter.execute(query);
+        }
     }
 
     @Override
@@ -90,7 +96,6 @@ public class MainActivity extends BaseActivity implements OnDataAvailable, OnRec
     @Override
     public void onItemLongClick(View view, int position) {
         Log.d(TAG, "onItemLongClick: starts");
-//        Toast.makeText(MainActivity.this, "Long tap at position " + position, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, PhotoDetailActivity.class);
         intent.putExtra(PHOTO_TRANSFER, flickrRecyclerViewAdapter.getPhotoIntoPosition(position));
         startActivity(intent);
